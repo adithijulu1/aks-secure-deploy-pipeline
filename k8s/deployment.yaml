@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-deploy-app
+  labels:
+    app: secure-deploy-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: secure-deploy-app
+  template:
+    metadata:
+      labels:
+        app: secure-deploy-app
+    spec:
+      containers:
+        - name: app
+          image: yourregistry.azurecr.io/secure-deploy-app:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: secrets-store
+              mountPath: "/mnt/secrets"
+              readOnly: true
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-keyvault-secrets"

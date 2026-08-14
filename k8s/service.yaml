@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: secure-deploy-app-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: secure-deploy-app
+  ports:
+    - port: 80
+      targetPort: 8080

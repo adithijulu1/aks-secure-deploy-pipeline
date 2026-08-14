@@ -1,0 +1,18 @@
+// Pod restart frequency - last 6 hours
+KubePodInventory
+| where TimeGenerated > ago(6h)
+| where PodRestartCount > 0
+| summarize RestartEvents = sum(PodRestartCount) by Name, Namespace
+| order by RestartEvents desc
+
+// Key Vault secret access audit
+AzureDiagnostics
+| where ResourceType == "VAULTS"
+| where OperationName == "SecretGet"
+| project TimeGenerated, CallerIPAddress, identity_claim_upn_s, ResultType
+
+// AKS deployment pipeline failures correlated with pod crash loops
+KubePodInventory
+| where TimeGenerated > ago(24h)
+| where PodStatus == "CrashLoopBackOff"
+| project TimeGenerated, Namespace, Name, ContainerStatus
