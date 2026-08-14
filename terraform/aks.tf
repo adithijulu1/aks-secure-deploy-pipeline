@@ -5,9 +5,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
   dns_prefix          = "${var.aks_cluster_name}-dns"
 
   default_node_pool {
-    name       = "default"
-    node_count = 2
-    vm_size    = "Standard_D2s_v3"
+    name           = "default"
+    node_count     = 2
+    vm_size        = "Standard_D2s_v3"
     vnet_subnet_id = azurerm_subnet.aks_subnet.id
   }
 
